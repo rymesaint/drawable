@@ -1,8 +1,4 @@
-import 'dart:typed_data';
-import 'dart:ui';
-
 import 'package:drawable/drawable.dart';
-import 'package:drawable/src/drawable_type.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -12,11 +8,16 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   tearDown(() {
-    channel.setMockMethodCallHandler(null);
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (methodCall) async {
+      return null;
+    });
   });
+
   group('loadBitmap', () {
     test('simple', () async {
-      channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (methodCall) async {
         expect(methodCall.method, 'bitmap');
         expect(methodCall.arguments['id'], 'foo');
         expect(methodCall.arguments['type'], 'drawable');
@@ -28,7 +29,8 @@ void main() {
     });
 
     test('complicated', () async {
-      channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (methodCall) async {
         expect(methodCall.method, 'bitmap');
         expect(methodCall.arguments['id'], 'foo');
         expect(methodCall.arguments['type'], 'mipmap');
@@ -45,7 +47,8 @@ void main() {
 
   group('loadVector', () {
     test('simple', () async {
-      channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (methodCall) async {
         expect(methodCall.method, 'vector');
         expect(methodCall.arguments['id'], 'foo');
         expect(methodCall.arguments['type'], 'drawable');
@@ -58,7 +61,8 @@ void main() {
     });
 
     test('with scale and as mipmap', () async {
-      channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (methodCall) async {
         expect(methodCall.method, 'vector');
         expect(methodCall.arguments['id'], 'foo');
         expect(methodCall.arguments['type'], 'mipmap');
@@ -77,7 +81,8 @@ void main() {
 
   test('loadColor', () async {
     const color = Color(0x00ff69b4);
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (methodCall) async {
       expect(methodCall.method, 'color');
       expect(methodCall.arguments['id'], 'foo');
       expect(methodCall.arguments['type'], null);
@@ -90,7 +95,8 @@ void main() {
 
   group('loadAdaptiveIcon', () {
     test('simple', () async {
-      channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (methodCall) async {
         expect(methodCall.method, 'adaptiveIcon');
         expect(methodCall.arguments['id'], 'foo');
         expect(methodCall.arguments['type'], 'drawable');
@@ -108,7 +114,8 @@ void main() {
     });
 
     test('with scale and as mipmap', () async {
-      channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (methodCall) async {
         expect(methodCall.method, 'adaptiveIcon');
         expect(methodCall.arguments['id'], 'foo');
         expect(methodCall.arguments['type'], 'mipmap');

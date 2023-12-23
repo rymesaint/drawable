@@ -1,4 +1,4 @@
-import 'dart:ui' as ui show Codec;
+import 'dart:ui' as ui show Codec, ImmutableBuffer;
 
 import 'package:drawable/drawable.dart';
 import 'package:flutter/foundation.dart';
@@ -27,8 +27,7 @@ class DrawableImage extends ImageProvider<DrawableImage> {
     return Future<DrawableImage>.value(this);
   }
 
-  @override
-  ImageStreamCompleter load(DrawableImage key, DecoderCallback decode) {
+  ImageStreamCompleter load(DrawableImage key, ImageDecoderCallback decode) {
     return MultiFrameImageStreamCompleter(
       codec: _loadAsync(key, decode),
       scale: key.scale,
@@ -39,7 +38,8 @@ class DrawableImage extends ImageProvider<DrawableImage> {
     );
   }
 
-  Future<ui.Codec> _loadAsync(DrawableImage key, DecoderCallback decode) async {
+  Future<ui.Codec> _loadAsync(
+      DrawableImage key, ImageDecoderCallback decode) async {
     assert(key == this);
 
     final drawable = await androidDrawable.loadBitmap(name: name);
@@ -50,7 +50,9 @@ class DrawableImage extends ImageProvider<DrawableImage> {
     }
     final bytes = drawable.content;
 
-    return decode(bytes);
+    final buffer = await ui.ImmutableBuffer.fromUint8List(bytes);
+
+    return decode(buffer);
   }
 
   @override
@@ -62,7 +64,7 @@ class DrawableImage extends ImageProvider<DrawableImage> {
   }
 
   @override
-  int get hashCode => hashValues(name, scale);
+  int get hashCode => Object.hash(name, scale);
 
   @override
   String toString() =>

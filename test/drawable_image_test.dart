@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:drawable/drawable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,13 +11,17 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (methodCall) async {
       return Uint8List.fromList(kBlueRectPng);
     });
   });
 
   tearDown(() {
-    channel.setMockMethodCallHandler(null);
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (methodCall) async {
+      return null;
+    });
   });
 
   testWidgets('test that DrawableImage shows the expected image',
@@ -73,6 +75,6 @@ Future<void> setGoldenImageSurfaceSize(WidgetTester tester) async {
   const height = 896.0;
   const pixelRation = 1.0;
 
-  tester.binding.window.devicePixelRatioTestValue = pixelRation;
+  tester.view.devicePixelRatio = pixelRation;
   await tester.binding.setSurfaceSize(const Size(width, height));
 }
